@@ -30,7 +30,12 @@ public class OrderServiceImpl implements OrderService {
 		// TODO Auto-generated method stub
 		return orderDao.queryOrderInfo(orderId);
 	}
-	
+
+	@Override
+	public int insertOrder(Order order) throws Exception {
+		return orderDao.insertOrder(order);
+	}
+
 
 }
 

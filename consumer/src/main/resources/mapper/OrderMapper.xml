@@ -18,7 +18,13 @@
 		a.`version`
 		FROM
 		`order` a
-		WHERE  orderid = #{0}
+		WHERE  orderstatus = #{0}
 	</select>
+
+	<insert id="insertOrder" parameterType="com.dongnao.james.rabbit.model.Order" >
+		INSERT INTO `order`(ordertime,ordermoney,orderstatus,`version`)
+		VALUES
+			(#{ordertime},#{ordermoney},#{orderstatus},#{version});
+	</insert>
 
 </mapper>

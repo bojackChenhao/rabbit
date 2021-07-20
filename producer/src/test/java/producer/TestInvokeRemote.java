@@ -27,8 +27,9 @@ public class TestInvokeRemote {
 		for (int i = 0; i < USER_NUM; i++) {
 			new Thread(new UserRequst()).start();
 			cdl.countDown();// 倒计时器减一
+			System.out.println(cdl.getCount());
 		}
-		Thread.currentThread().sleep(2000);
+		Thread.currentThread().sleep(20000);
    }
 
 	// 内部类继承线程接口，用于模拟用户请求

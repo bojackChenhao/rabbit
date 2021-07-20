@@ -36,18 +36,17 @@ public class TestRabbitMQ {
 	}
 	@Test
 	public void testRabbitObject() {
-		String queueName = "queueObject";
-		Map<String,Object> user = new HashMap<String,Object>(); // 实现Serializable接口
-		user.put("name", "张三");
-		user.put("age", 24);
-		//rabbitSender.sendObject(queueName,user);
+		String exchange = "exchange";
+		String queueName = "topic.order";
+		String orderId = "123456";
+		rabbitSender.sendTopic(exchange,queueName,orderId);
 	}
 	@Test
 	public void testRabbitTopic() {
 		String exchange = "exchange";
 		String queueName = "topic.order";
 		String orderId = "123456";
-		//rabbitSender.sendTopic(exchange,queueName,orderId);
+		rabbitSender.sendTopic(exchange,queueName,orderId);
 	}
 	
 	
@@ -59,8 +58,8 @@ public class TestRabbitMQ {
 			new Thread(new UserRequst()).start();
 			cdl.countDown();// 倒计时器减一
 		}
-		
-		Thread.currentThread().sleep(10000);
+		cdl.await();
+//		Thread.currentThread().sleep(60000);
 
 	}
 	

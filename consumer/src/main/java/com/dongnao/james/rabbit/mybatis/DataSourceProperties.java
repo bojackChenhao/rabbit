@@ -22,7 +22,7 @@ public class DataSourceProperties {
 		public final static String DS="mysqldb.datasource";	
 		private String driverClassName ="com.mysql.jdbc.Driver";
 		
-		private String url="jdbc:mysql://192.168.62.17:3306/mas-party-1";
+		private String url="jdbc:mysql://localhost:3306/hly_billing?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2B8";
 		private String username="root";
 		private String password="123456";
 		private int minIdle=2;

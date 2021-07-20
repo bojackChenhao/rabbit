@@ -7,5 +7,7 @@ import com.dongnao.james.rabbit.model.Order;
 public interface OrderDao {
 	//查询方法
     Order queryOrderInfo(String orderid);
-   
+
+    int insertOrder(Order order);
+
 }
