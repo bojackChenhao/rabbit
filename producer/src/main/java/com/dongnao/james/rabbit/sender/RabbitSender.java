@@ -24,4 +24,6 @@ public class RabbitSender {
 	public void sendTopic(String exchange, String queue, String orderId) {
         template.convertAndSend(exchange,queue,orderId);
     }
+
+
 }

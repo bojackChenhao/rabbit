@@ -1,0 +1,16 @@
+server:
+  port: 8090
+spring:
+  application:
+    name: consumer
+  rabbitmq:
+    host: 192.168.0.221
+    port: 5672
+    username: admin
+    password: admin
+    listener:
+      acknowledge-mode: manual
+      retry:
+        max-attempts: 5
+        enabled: true
+        initial-interval: 5000

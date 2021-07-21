@@ -20,7 +20,7 @@ import producer.TestInvokeRemote.UserRequst;
 public class TestRabbitMQ {
 
 	// 并发量
-	private static final int USER_NUM = 500;
+	private static final int USER_NUM = 100;
 	// 倒计时器，用于模拟高并发
 	private static CountDownLatch cdl = new CountDownLatch(USER_NUM);
 	
@@ -53,14 +53,16 @@ public class TestRabbitMQ {
     //并发模拟
 	@Test
 	public void testStressRabbitTopic() throws InterruptedException {
+		long start = System.currentTimeMillis();
 		// 循环实例化USER_NUM个并发请求（线程）
 		for (int i = 0; i < USER_NUM; i++) {
 			new Thread(new UserRequst()).start();
 			cdl.countDown();// 倒计时器减一
 		}
 		cdl.await();
-//		Thread.currentThread().sleep(60000);
 
+		System.out.println("执行时间" + (System.currentTimeMillis()-start));
+		Thread.sleep(60000);
 	}
 	
 	// 内部类继承线程接口，用于模拟用户请求
