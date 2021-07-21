@@ -37,9 +37,9 @@ public class OrderBusiness {
     }
     //监听指定的topic.order队列，当此队列有数据时，数据就会被取走
     @RabbitListener(queues="topic.order")    
-    public void process1(String orderId, Message message, Channel channel) throws IOException {
+    public void process1(String orderId, Message message, Channel channel) throws Exception {
         Order order = null;
-        try {
+//        try {
             System.out.println(System.currentTimeMillis()+"====Receive from topic.order orderId is========:" + orderId);
             channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
             throw new Exception();
@@ -50,12 +50,12 @@ public class OrderBusiness {
 //				//将查询出来的订单信息结果发送到topic.orderReceive队列，等待userService来获取
 //				rabbitSender.send("topic.orderReceive", order.getOrderid()+"~"+order.getOrdermoney()+"~"+order.getOrderstatus()+"~"+order.getOrdertime());
 //			}
-		} catch (Exception e) {
-			e.printStackTrace();
-            System.out.println("失败确认");
-            channel.basicReject(message.getMessageProperties().getDeliveryTag(), false);
-		}
-        
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//            System.out.println("失败确认");
+//            channel.basicReject(message.getMessageProperties().getDeliveryTag(), false);
+//		}
+//
     }
     /*@RabbitListener(queues="topic.messages")    //监听器监听指定的Queue
     public void process2(String orderId) {
