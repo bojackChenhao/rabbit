@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.rabbitmq.client.Channel;
 import org.springframework.amqp.core.Message;
+import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -36,13 +37,14 @@ public class OrderBusiness {
         System.out.println("Receive Object===:"+user);
     }
     //监听指定的topic.order队列，当此队列有数据时，数据就会被取走
-    @RabbitListener(queues="topic.order")    
-    public void process1(String orderId, Message message, Channel channel) throws Exception {
+    @RabbitListener(queues="topic.order")
+    @RabbitHandler
+    public void process1(String orderId, Message message, Channel channel) throws IOException {
         Order order = null;
 //        try {
             System.out.println(System.currentTimeMillis()+"====Receive from topic.order orderId is========:" + orderId);
-            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
-            throw new Exception();
+            channel.basicAck(message.getMessageProperties().getDeliveryTag(), true);
+//            throw new Exception();
             //根据从队列里获取到的orderId, 查询出订单信息
 //			order = orderService.queryOrderInfo(orderId);
 //

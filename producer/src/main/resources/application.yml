@@ -8,11 +8,11 @@ spring:
     port: 5672
     username: admin
     password: admin
-    publisher-confirms: true
-    publisher-returns: true
+    publisher-confirm-type: correlated
     listener:
-      acknowledge-mode: manual
-      retry:
-        max-attempts: 5
-        enabled: true
-        initial-interval: 5000
+        simple:
+          acknowledge-mode: manual
+#      retry:
+#        max-attempts: 5
+#        enabled: true
+#        initial-interval: 5000
