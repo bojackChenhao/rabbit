@@ -58,7 +58,7 @@ public class TopicConf{
             public void confirm(CorrelationData correlationData, boolean ack, String cause) {
                 //当消息成功抵达消息中间件后会调用
                 //处理具体的业务
-                System.out.println(correlationData.toString()+ack+cause);
+                System.out.println(ack+cause);
             }
         });
 

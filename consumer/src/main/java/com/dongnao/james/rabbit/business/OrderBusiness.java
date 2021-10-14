@@ -1,8 +1,15 @@
 package com.dongnao.james.rabbit.business;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSON;
+import com.dongnao.james.rabbit.body.FileBlockBody;
 import com.rabbitmq.client.Channel;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
@@ -20,7 +27,13 @@ public class OrderBusiness {
 	private OrderService orderService;
     @Autowired
 	private RabbitSender rabbitSender;//将处理结果发送数据到队列
-    
+
+    private FileChannel bufferfile = FileChannel.open(Paths.get("D:\\111.tar", ""), StandardOpenOption.WRITE, StandardOpenOption.CREATE);
+
+    public OrderBusiness() throws IOException {
+    }
+
+
     //监听器监听指定的Queue
     @RabbitListener(queues="queue")    
     public void processC(String orderId) {
@@ -39,28 +52,54 @@ public class OrderBusiness {
     //监听指定的topic.order队列，当此队列有数据时，数据就会被取走
     @RabbitListener(queues="topic.order")
     @RabbitHandler
-    public void process1(String orderId, Message message, Channel channel) throws IOException {
-        Order order = null;
+    public void process1(Message message, Channel channel) throws IOException {
+        System.out.println("start");
+//        FileBlockBody body = JSON.parseObject(message.getBody(), FileBlockBody.class);
 //        try {
-            System.out.println(System.currentTimeMillis()+"====Receive from topic.order orderId is========:" + orderId);
-            channel.basicAck(message.getMessageProperties().getDeliveryTag(), true);
-//            throw new Exception();
-            //根据从队列里获取到的orderId, 查询出订单信息
-//			order = orderService.queryOrderInfo(orderId);
+//            this.bufferfile.write(ByteBuffer.wrap(body.getContent(), 0, body.getLimit()), body.getStart());
+//        } catch (IOException e) {
+//            System.out.println("接收到文件块(编号."+"body.getBlockindex()"+")时文件已经被关闭。");
 //
-//			if(null != order){
-//				//将查询出来的订单信息结果发送到topic.orderReceive队列，等待userService来获取
-//				rabbitSender.send("topic.orderReceive", order.getOrderid()+"~"+order.getOrdermoney()+"~"+order.getOrderstatus()+"~"+order.getOrdertime());
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//            System.out.println("失败确认");
-//            channel.basicReject(message.getMessageProperties().getDeliveryTag(), false);
-//		}
-//
+//            // 文件已经写入完成并关闭后，如果还收到数据块，此处会因文件已关闭而抛出异常，该异常可忽略
+////            if (!isComplete(this.matrix)) {
+////                throw e;
+////            } else {
+////                return;
+////            }
+//        }
+//        System.out.println("");
+        channel.basicReject(message.getMessageProperties().getDeliveryTag(),false);
     }
-    /*@RabbitListener(queues="topic.messages")    //监听器监听指定的Queue
-    public void process2(String orderId) {
-        System.out.println("orderId:"+orderId);
-    }*/
+
+
+    @RabbitListener(queues="topic.file")
+    @RabbitHandler
+    public void fileReceive(Message message, Channel channel) throws IOException {
+//        FileBlockBody body = JSON.parseObject(message.getBody(), FileBlockBody.class);
+//        try {
+//            this.bufferfile.write(ByteBuffer.wrap(body.getContent(), 0, body.getLimit()), body.getStart());
+//        } catch (IOException e) {
+//            System.out.println("接收到文件块(编号."+"body.getBlockindex()"+")时文件已经被关闭。");
+//
+//            // 文件已经写入完成并关闭后，如果还收到数据块，此处会因文件已关闭而抛出异常，该异常可忽略
+////            if (!isComplete(this.matrix)) {
+////                throw e;
+////            } else {
+////                return;
+////            }
+//        }
+        System.out.println("shoudao");
+
+    }
+
+    private boolean isComplete(byte[] matrix) {
+        if (matrix != null && matrix.length > 0) {
+            for (byte b : matrix) {
+                if (b == 0) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 }

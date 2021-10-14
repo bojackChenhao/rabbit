@@ -1,5 +1,6 @@
 package com.dongnao.james.rabbit.sender;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rabbitmq.client.ConnectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,6 +8,8 @@ import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -24,10 +27,19 @@ public class TopicConf{
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
+
+
+
     @Bean(name = "orderMessage")
     public Queue queueMessage() {
         //系统启动时：创建一个topic.orderReceive的队列到rabbitMQ
         return new Queue("topic.orderReceive");
+    }
+
+    @Bean(name = "fileMessage")
+    public Queue fileMessage() {
+        //系统启动时：创建一个topic.orderReceive的队列到rabbitMQ
+        return new Queue("topic.file");
     }
 
        /* @Bean(name="messages")
@@ -51,6 +63,7 @@ public class TopicConf{
 
     @PostConstruct
     public void initRabbitTemplate(){
+        rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
         //设置服务器收到消息确认回调
         rabbitTemplate.setConfirmCallback(new RabbitTemplate.ConfirmCallback() {
             /**
@@ -85,45 +98,5 @@ public class TopicConf{
             }
         });
     }
-//    @PostConstruct
-//    public void init(){
-//        rabbitTemplate.setReturnCallback(this);             //指定 ReturnCallback
-//    }
 
-
-
-
-
-       /* @Bean
-        Binding bindingExchangeMessages(@Qualifier("messages") Queue queueMessages, TopicExchange exchange) {
-            return BindingBuilder.bind(queueMessages).to(exchange).with("topic.#");//*表示一个词,#表示零个或多个词
-        }*/
-
-//    @Bean
-//    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
-//
-//        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
-//        Logger log = LoggerFactory.getLogger(RabbitTemplate.class);
-//
-//
-//        // 消息发送失败返回到队列中, yml需要配置 publisher-returns: true
-//        rabbitTemplate.setMandatory(true);
-//
-//        // 消息返回, yml需要配置 publisher-returns: true
-//        rabbitTemplate.setReturnCallback((message, replyCode, replyText, exchange, routingKey) -> {
-//            String correlationId = message.getMessageProperties().getCorrelationIdString();
-//            log.debug("消息：{} 发送失败, 应答码：{} 原因：{} 交换机: {}  路由键: {}", correlationId, replyCode, replyText, exchange, routingKey);
-//        });
-//
-//        // 消息确认, yml需要配置 publisher-confirms: true
-//        rabbitTemplate.setConfirmCallback((correlationData, ack, cause) -> {
-//            if (ack) {
-//                // log.debug("消息发送到exchange成功,id: {}", correlationData.getId());
-//            } else {
-//                log.debug("消息发送到exchange失败,原因: {}", cause);
-//            }
-//        });
-//
-//        return rabbitTemplate;
-//    }
 }
